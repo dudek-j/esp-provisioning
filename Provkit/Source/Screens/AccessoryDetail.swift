@@ -1,4 +1,5 @@
 import SwiftUI
+import ESPProvision
 import AccessorySetupKit
 
 struct AccessoryDetail<Item: Accessory>: View {
@@ -23,9 +24,7 @@ struct AccessoryDetail<Item: Accessory>: View {
             action: {
                 Button(
                     action: connect,
-                    label: {
-                        ButtonLabel(title: "Provision", loading: $loading)
-                    }
+                    label: { ButtonLabel(title: "Connect", loading: $loading) }
                 ).disabled(loading || !accessory.authorised)
             }
         ).alert(isPresented: $showAlert) {
@@ -37,8 +36,10 @@ struct AccessoryDetail<Item: Accessory>: View {
         Task {
             loading = true
             do {
-                try await accessory.connect()
-                alert("Success")
+                let provisoning = Provisioning(accessory)
+                try await provisoning.connect()
+                let wifi = try await provisoning.wifiList()
+                alert("Success \(wifi.map(\..ssid))")
             } catch {
                 alert("DBG: \(error)")
             }
