@@ -1,18 +1,19 @@
 import SwiftUI
 
 struct AccessoryList<A: Accessory>: View {
+    @State var selected: A?
     var accessories: [A]
 
     var body: some View {
         NavigationStack {
             List(accessories, id: \.id ,rowContent: AccessoryItem)
-                .navigationDestination(for: A.self, destination: AccessoryDetail.init)
                 .navigationTitle("Accessories")
+                .sheet(item: $selected, content: AccessorySheet)
         }
     }
 
     private func AccessoryItem(_ accessory: A) -> some View {
-        NavigationLink(value: accessory) {
+        Button(action: { selected = accessory }) {
             HStack(spacing: 16) {
                 Circle()
                     .foregroundStyle(accessory.authorised ? .green : .red)
@@ -23,7 +24,13 @@ struct AccessoryList<A: Accessory>: View {
                         .font(.caption)
                 }
             }
-        }.disabled(!accessory.authorised)
+        }.foregroundStyle(.foreground)
+    }
+
+    private func AccessorySheet(_ accessory: A) -> some View {
+        NavigationStack {
+            AccessoryDetail(accessory: accessory)
+        }.interactiveDismissDisabled()
     }
 }
 

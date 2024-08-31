@@ -3,11 +3,12 @@ import ESPProvision
 import AccessorySetupKit
 
 struct AccessoryDetail<Item: Accessory>: View {
+    @Environment(\.dismiss) var dismiss
+
     let provisioning: Provisioning
     let accessory: Item
 
     @State var loading = false
-
     @State var showAlert = false
     @State var alert: String?
 
@@ -27,8 +28,18 @@ struct AccessoryDetail<Item: Accessory>: View {
                     label: { ButtonLabel(title: "Connect", loading: $loading) }
                 ).disabled(loading || !accessory.authorised)
             }
-        ).alert(isPresented: $showAlert) {
+        )
+        .toolbar(content: ToolbarContent)
+        .interactiveDismissDisabled()
+        .alert(isPresented: $showAlert) {
             Alert(title: Text(alert ?? "Nothing here"))
+        }
+    }
+
+    private func ToolbarContent() -> some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button("Cancel", role: .cancel, action: { dismiss() })
+                .disabled(loading)
         }
     }
 
@@ -50,7 +61,6 @@ struct AccessoryDetail<Item: Accessory>: View {
     private func alert(_ title: String) {
         alert = title
         showAlert = true
-
     }
 }
 
