@@ -9,8 +9,7 @@ struct AccessoryDetail<Item: Accessory>: View {
     let accessory: Item
 
     @State var loading = false
-    @State var showAlert = false
-    @State var alert: String?
+    @State var alert: AlertContent?
 
     init(accessory: Item) {
         self.provisioning = Provisioning(accessory)
@@ -31,9 +30,7 @@ struct AccessoryDetail<Item: Accessory>: View {
         )
         .toolbar(content: ToolbarContent)
         .interactiveDismissDisabled()
-        .alert(isPresented: $showAlert) {
-            Alert(title: Text(alert ?? "Nothing here"))
-        }
+        .alert(item: $alert) { $0.view }
     }
 
     private func ToolbarContent() -> some ToolbarContent {
@@ -47,20 +44,14 @@ struct AccessoryDetail<Item: Accessory>: View {
         Task {
             loading = true
             do {
-                let provisoning = Provisioning(accessory)
-                try await provisoning.connect()
-                let wifi = try await provisoning.wifiList()
-                alert("Success \(wifi.map(\..ssid))")
+                try await provisioning.connect()
+                let wifi = try await provisioning.wifiList()
+                alert = "Success \(wifi.map(\..ssid))"
             } catch {
-                alert("DBG: \(error)")
+                alert = "DBG: \(error)"
             }
             loading = false
         }
-    }
-
-    private func alert(_ title: String) {
-        alert = title
-        showAlert = true
     }
 }
 
