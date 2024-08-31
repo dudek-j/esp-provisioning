@@ -17,40 +17,21 @@ struct AccessoryDetail<Item: Accessory>: View {
     }
 
     var body: some View {
-        ActionView(
-            image: Image(systemName: "wifi"),
-            title: accessory.displayName,
-            message: "Make sure device is nearby before attempting to provision",
-            action: {
-                Button(
-                    action: connect,
-                    label: { ButtonLabel(title: "Connect", loading: $loading) }
-                ).disabled(loading || !accessory.authorised)
-            }
+        ConnectAction(
+            alert: $alert,
+            loading: $loading,
+            provisioning: provisioning,
+            accessory: accessory
         )
-        .toolbar(content: ToolbarContent)
+        .toolbar(content: Toolbar)
         .interactiveDismissDisabled()
         .alert(item: $alert) { $0.view }
     }
 
-    private func ToolbarContent() -> some ToolbarContent {
+    private func Toolbar() -> some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
             Button("Cancel", role: .cancel, action: { dismiss() })
                 .disabled(loading)
-        }
-    }
-
-    private func connect() {
-        Task {
-            loading = true
-            do {
-                try await provisioning.connect()
-                let wifi = try await provisioning.wifiList()
-                alert = "Success \(wifi.map(\..ssid))"
-            } catch {
-                alert = "DBG: \(error)"
-            }
-            loading = false
         }
     }
 }
