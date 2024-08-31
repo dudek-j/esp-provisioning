@@ -6,6 +6,7 @@ struct ConnectAction: View {
 
     let provisioning: Provisioning
     let accessory: any Accessory
+    let onConnect: () -> Void
 
     var body: some View {
         ActionView(
@@ -26,8 +27,7 @@ struct ConnectAction: View {
             loading = true
             do {
                 try await provisioning.connect()
-                let wifi = try await provisioning.wifiList()
-                alert = "Success \(wifi.map(\..ssid))"
+                onConnect()
             } catch {
                 alert = "DBG: \(error)"
             }

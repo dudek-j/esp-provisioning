@@ -2,30 +2,53 @@ import SwiftUI
 import ESPProvision
 import AccessorySetupKit
 
-struct AccessoryDetail<Item: Accessory>: View {
+struct AccessoryDetail: View {
     @Environment(\.dismiss) var dismiss
 
     let provisioning: Provisioning
-    let accessory: Item
+    let accessory: any Accessory
 
+    @State var step: Step = .connect
     @State var loading = false
     @State var alert: AlertContent?
 
-    init(accessory: Item) {
+    init(accessory: any Accessory) {
         self.provisioning = Provisioning(accessory)
         self.accessory = accessory
     }
 
     var body: some View {
-        ConnectAction(
-            alert: $alert,
-            loading: $loading,
-            provisioning: provisioning,
-            accessory: accessory
-        )
-        .toolbar(content: Toolbar)
-        .interactiveDismissDisabled()
-        .alert(item: $alert) { $0.view }
+        CurrentStep()
+            .toolbar(content: Toolbar)
+            .interactiveDismissDisabled()
+            .alert(item: $alert) { $0.view }
+    }
+
+    private func CurrentStep() -> some View {
+        Group {
+            switch step {
+            case .connect:
+                ConnectAction(
+                    alert: $alert,
+                    loading: $loading,
+                    provisioning: provisioning,
+                    accessory: accessory,
+                    onConnect: { setStep(step: .selectWifi) }
+                )
+            case .selectWifi:
+                SelectNetwork(
+                    displayName: accessory.displayName,
+                    refresh: provisioning.wifiList
+                )
+            }
+        }
+    }
+
+    private func setStep(step: Step) {
+        withAnimation {
+            self.step = step
+        }
+
     }
 
     private func Toolbar() -> some ToolbarContent {
@@ -34,7 +57,13 @@ struct AccessoryDetail<Item: Accessory>: View {
                 .disabled(loading)
         }
     }
+
+    enum Step {
+        case connect
+        case selectWifi
+    }
 }
+
 
 #Preview {
     NavigationStack {
