@@ -9,7 +9,6 @@ struct SelectNetwork: View {
 
     @State var selectedSSID: String?
     @State var password: String = ""
-    @State var showPasswordInput: Bool = false
 
     let displayName: String
     let refresh: () async throws -> [any WifiNetwork]
@@ -40,7 +39,7 @@ struct SelectNetwork: View {
             .refreshable(action: refreshNetworks)
             .alert(
                 "Enter password for \n \(selectedSSID ?? "")",
-                isPresented: $showPasswordInput,
+                isPresented: .constant(selectedSSID != nil),
                 actions: PasswordAlert
             )
     }
@@ -56,7 +55,6 @@ struct SelectNetwork: View {
     private func NetworkRow(_ network: any WifiNetwork) -> some View {
         Button(action: {
             selectedSSID = network.ssid
-            showPasswordInput = true
         }) {
             HStack(spacing: 16) {
                 Image(
