@@ -24,26 +24,25 @@ struct AccessoryDetail: View {
             .alert(item: $alert) { $0.view }
     }
 
+    @ViewBuilder
     private func CurrentStep() -> some View {
-        Group {
-            switch step {
-            case .connect:
-                ConnectAction(
-                    loading: $loading,
-                    accessory: accessory,
-                    connect: connect
-                )
-            case .selectWifi:
-                SelectNetwork(
-                    displayName: accessory.displayName,
-                    refresh: provisioning.wifiList,
-                    onCredentials: {
-                        setStep(step: .provision(ssid: $0, password: $1))
-                    }
-                )
-            case .provision(let ssid, let password):
-                Text("\(ssid)\n\(password)")
-            }
+        switch step {
+        case .connect:
+            ConnectAction(
+                loading: $loading,
+                accessory: accessory,
+                connect: connect
+            )
+        case .selectWifi:
+            SelectNetwork(
+                displayName: accessory.displayName,
+                refresh: provisioning.wifiList,
+                onCredentials: {
+                    setStep(step: .provision(ssid: $0, password: $1))
+                }
+            )
+        case .provision(let ssid, let password):
+            Text("\(ssid)\n\(password)")
         }
     }
 

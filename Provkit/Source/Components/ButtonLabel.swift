@@ -16,13 +16,12 @@ struct ButtonLabel: View {
             .frame(maxWidth: .infinity)
     }
 
+    @ViewBuilder
     private func Title() -> some View {
-        Group {
-            if loading {
-                ProgressView().controlSize(.regular)
-            } else {
-                Text(title)
-            }
+        if loading {
+            ProgressView().controlSize(.regular)
+        } else {
+            Text(title)
         }
     }
 }

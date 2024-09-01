@@ -52,6 +52,7 @@ struct SelectNetwork: View {
             networks = []
         }
     }
+    
     private func NetworkRow(_ network: any WifiNetwork) -> some View {
         Button(action: {
             selectedSSID = network.ssid
@@ -69,32 +70,30 @@ struct SelectNetwork: View {
         }.foregroundStyle(.foreground)
     }
 
+    @ViewBuilder
     private func NoContent() -> some View {
-        Group {
-            if let networks, networks.isEmpty {
-                ContentUnavailableView(
-                    "\(displayName) could not find any networks",
-                    systemImage: "wifi.slash",
-                    description: Text("Pull to refresh")
-                )
-            }
+        if let networks, networks.isEmpty {
+            ContentUnavailableView(
+                "\(displayName) could not find any networks",
+                systemImage: "wifi.slash",
+                description: Text("Pull to refresh")
+            )
+        }
 
-            if networks == nil{
-                ContentUnavailableView(label: {
-                    ProgressView().controlSize(.regular)
-                }, description: {
-                    Text("\(displayName) is looking for networks")
-                })
-            }
+        if networks == nil{
+            ContentUnavailableView(label: {
+                ProgressView().controlSize(.regular)
+            }, description: {
+                Text("\(displayName) is looking for networks")
+            })
         }
     }
 
+    @ViewBuilder
     private func PasswordAlert() -> some View {
-        Group {
-            SecureField("Password", text: $password)
-            Button("Provision", action: { onCredentials(selectedSSID!, password) })
-            Button("Cancel", role: .cancel, action: { password = "" })
-        }
+        SecureField("Password", text: $password)
+        Button("Provision", action: { onCredentials(selectedSSID!, password) })
+        Button("Cancel", role: .cancel, action: { password = "" })
     }
 }
 
