@@ -36,8 +36,13 @@ struct AccessoryDetail: View {
             case .selectWifi:
                 SelectNetwork(
                     displayName: accessory.displayName,
-                    refresh: provisioning.wifiList
+                    refresh: provisioning.wifiList,
+                    onCredentials: {
+                        setStep(step: .provision(ssid: $0, password: $1))
+                    }
                 )
+            case .provision(let ssid, let password):
+                Text("\(ssid)\n\(password)")
             }
         }
     }
@@ -72,6 +77,7 @@ struct AccessoryDetail: View {
     enum Step {
         case connect
         case selectWifi
+        case provision(ssid: SSID, password: Password)
     }
 }
 

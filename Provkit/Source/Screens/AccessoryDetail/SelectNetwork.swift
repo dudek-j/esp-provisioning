@@ -1,17 +1,29 @@
 import SwiftUI
 
+typealias SSID = String
+typealias Password = String
+
 struct SelectNetwork: View {
     @State var networks: [any WifiNetwork]?
+    @State var alert: AlertContent?
+
+    @State var selectedSSID: String?
+    @State var password: String = ""
+    @State var showPasswordInput: Bool = false
 
     let displayName: String
     let refresh: () async throws -> [any WifiNetwork]
+    let onCredentials: (SSID, Password) -> Void
+
 
     init(
         displayName: String,
-        refresh: @escaping () async throws -> [any WifiNetwork]
+        refresh: @escaping () async throws -> [any WifiNetwork],
+        onCredentials: @escaping (SSID, Password) -> Void
     ) {
         self.displayName = displayName
         self.refresh = refresh
+        self.onCredentials = onCredentials
     }
 
     var body: some View {
@@ -26,6 +38,11 @@ struct SelectNetwork: View {
             .overlay(content: NoContent)
             .task(refreshNetworks)
             .refreshable(action: refreshNetworks)
+            .alert(
+                "Enter password for \n \(selectedSSID ?? "")",
+                isPresented: $showPasswordInput,
+                actions: PasswordAlert
+            )
     }
 
     @Sendable
@@ -37,7 +54,10 @@ struct SelectNetwork: View {
         }
     }
     private func NetworkRow(_ network: any WifiNetwork) -> some View {
-        Button(action: {}) {
+        Button(action: {
+            selectedSSID = network.ssid
+            showPasswordInput = true
+        }) {
             HStack(spacing: 16) {
                 Image(
                     systemName: "cellularbars",
@@ -70,6 +90,14 @@ struct SelectNetwork: View {
             }
         }
     }
+
+    private func PasswordAlert() -> some View {
+        Group {
+            SecureField("Password", text: $password)
+            Button("Provision", action: { onCredentials(selectedSSID!, password) })
+            Button("Cancel", role: .cancel, action: { password = "" })
+        }
+    }
 }
 
 #Preview {
@@ -81,8 +109,9 @@ struct SelectNetwork: View {
                 PreviewNetwork(rssi: -52),
                 PreviewNetwork(rssi: -62),
                 PreviewNetwork(rssi: -80),
-            ]
-        })
+            ]},
+            onCredentials: { _, _ in }
+        )
 
     }
 }
