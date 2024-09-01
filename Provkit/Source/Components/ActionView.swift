@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ActionView<Button: View>: View {
-    var image: Image
+    var image: String
     var title: String
     var message: String
     @ViewBuilder let action: Button
@@ -18,7 +18,7 @@ struct ActionView<Button: View>: View {
 
     @ViewBuilder
     func Content() -> some View {
-        image
+        LargeImage(systemName: image)
             .font(.system(size: 150, weight: .light))
             .foregroundStyle(.gray)
         Text(title)

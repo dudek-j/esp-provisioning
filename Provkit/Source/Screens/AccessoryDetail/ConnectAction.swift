@@ -8,7 +8,7 @@ struct ConnectAction: View {
 
     var body: some View {
         ActionView(
-            image: Image(systemName: "wifi"),
+            image: "wifi",
             title: accessory.displayName,
             message: "Make sure device is nearby before attempting to provision",
             action: {

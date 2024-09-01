@@ -5,7 +5,7 @@ struct DiscoverAccessories: View {
 
     var body: some View {
         ActionView(
-            image:  Image(systemName: "wifi.square"),
+            image:  "wifi.square",
             title: "No WiFi-accessory",
             message: "Make sure your accessory is nearby and in provisioning mode",
             action: {
