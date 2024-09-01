@@ -29,11 +29,9 @@ struct AccessoryDetail: View {
             switch step {
             case .connect:
                 ConnectAction(
-                    alert: $alert,
                     loading: $loading,
-                    provisioning: provisioning,
                     accessory: accessory,
-                    onConnect: { setStep(step: .selectWifi) }
+                    connect: connect
                 )
             case .selectWifi:
                 SelectNetwork(
@@ -49,6 +47,19 @@ struct AccessoryDetail: View {
             self.step = step
         }
 
+    }
+
+    private func connect() {
+        Task {
+            loading = true
+            do {
+                try await provisioning.connect()
+                setStep(step: .selectWifi)
+            } catch {
+                alert = "DBG: \(error)"
+            }
+            loading = false
+        }
     }
 
     private func Toolbar() -> some ToolbarContent {
