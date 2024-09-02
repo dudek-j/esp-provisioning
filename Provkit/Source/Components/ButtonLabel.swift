@@ -1,14 +1,13 @@
 import SwiftUI
 
 struct ButtonLabel: View {
-    @Binding var loading: Bool
-
-    init(title: String, loading: Binding<Bool> = .constant(false)) {
-        self.title = title
-        self._loading = loading
-    }
-
     let title: String
+    let loading: Bool
+
+    init(title: String, loading: Bool = false) {
+        self.loading = loading
+        self.title = title
+    }
 
     var body: some View {
         Title()

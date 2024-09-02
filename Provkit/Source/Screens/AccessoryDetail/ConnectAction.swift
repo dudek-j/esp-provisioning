@@ -14,7 +14,7 @@ struct ConnectAction: View {
             action: {
                 Button(
                     action: connect,
-                    label: { ButtonLabel(title: "Connect", loading: $loading) }
+                    label: { ButtonLabel(title: "Connect", loading: loading) }
                 ).disabled(loading || !accessory.authorised)
             }
         )
