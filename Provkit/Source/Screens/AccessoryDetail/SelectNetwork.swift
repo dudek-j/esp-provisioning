@@ -52,7 +52,7 @@ struct SelectNetwork: View {
             networks = []
         }
     }
-    
+
     private func NetworkRow(_ network: any WifiNetwork) -> some View {
         Button(action: {
             selectedSSID = network.ssid

@@ -29,5 +29,10 @@ struct PreviewAccessory: Accessory {
     let displayName: String
     let authorised: Bool
 
+    init(displayName: String, authorised: Bool = true) {
+        self.displayName = displayName
+        self.authorised = authorised
+    }
+
     func connect() async throws {}
 }
