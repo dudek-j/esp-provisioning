@@ -4,14 +4,14 @@ struct ActionView<Button: View>: View {
     var image: String
     var title: String
     var message: String
-    @ViewBuilder let action: Button
+    @ViewBuilder let button: Button
 
     var body: some View {
         VStack {
             Spacer()
             Content()
             Spacer()
-            Action()
+            button
                 .padding(.top, 110)
         }.padding(64)
     }
@@ -27,12 +27,5 @@ struct ActionView<Button: View>: View {
         Text(message)
             .font(.subheadline)
             .multilineTextAlignment(.center)
-    }
-
-    @ViewBuilder
-    func Action() -> some View {
-        action
-            .buttonStyle(.bordered)
-            .controlSize(.large)
     }
 }

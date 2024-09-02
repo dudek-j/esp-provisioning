@@ -11,11 +11,13 @@ struct ConnectAction: View {
             image: "wifi",
             title: accessory.displayName,
             message: "Make sure device is nearby before attempting to provision",
-            action: {
-                Button(
+            button: {
+                PrimaryButton(
+                    title: "Connect",
                     action: connect,
-                    label: { ButtonLabel(title: "Connect", loading: loading) }
-                ).disabled(loading || !accessory.authorised)
+                    loading: loading,
+                    disabled: loading || !accessory.authorised
+                )
             }
         )
     }

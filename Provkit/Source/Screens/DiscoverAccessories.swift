@@ -8,11 +8,8 @@ struct DiscoverAccessories: View {
             image:  "wifi.square",
             title: "No WiFi-accessory",
             message: "Make sure your accessory is nearby and in provisioning mode",
-            action: {
-                Button(
-                    action: discover,
-                    label: { ButtonLabel(title: "Discover") }
-                )
+            button: {
+                PrimaryButton(title: "Discover", action: discover)
             }
         )
     }
