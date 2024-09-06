@@ -5,7 +5,7 @@ import AccessorySetupKit
 struct AccessoryDetail: View {
     @Environment(\.dismiss) var dismiss
 
-    let provisioning: Provisioning
+    let connection: Connection
     let accessory: any Accessory
 
     @State var step: Step = .connect
@@ -13,7 +13,7 @@ struct AccessoryDetail: View {
     @State var alert: AlertContent?
 
     init(accessory: any Accessory) {
-        self.provisioning = Provisioning(accessory)
+        self.connection = Connection(accessory)
         self.accessory = accessory
     }
 
@@ -33,15 +33,21 @@ struct AccessoryDetail: View {
                 accessory: accessory,
                 connect: connect
             )
-        case .selectWifi:
+        case .selectWifi(let provisioning):
             SelectNetwork(
                 displayName: accessory.displayName,
                 refresh: provisioning.wifiList,
                 onCredentials: {
-                    setStep(step: .provision(ssid: $0, password: $1))
+                    setStep(
+                        step: .provision(
+                            provisioning: provisioning,
+                            ssid: $0,
+                            password: $1
+                        )
+                    )
                 }
             )
-        case .provision(let ssid, let password):
+        case .provision(_, let ssid, let password):
             Text("\(ssid)\n\(password)")
         }
     }
@@ -57,8 +63,8 @@ struct AccessoryDetail: View {
         Task {
             loading = true
             do {
-                try await provisioning.connect()
-                setStep(step: .selectWifi)
+                let device = try await connection.establish()
+                setStep(step: .selectWifi(provisioning: Provisioning(device)))
             } catch {
                 alert = "DBG: \(error)"
             }
@@ -75,8 +81,8 @@ struct AccessoryDetail: View {
 
     enum Step {
         case connect
-        case selectWifi
-        case provision(ssid: SSID, password: Password)
+        case selectWifi(provisioning: Provisioning)
+        case provision(provisioning: Provisioning, ssid: SSID, password: Password)
     }
 }
 

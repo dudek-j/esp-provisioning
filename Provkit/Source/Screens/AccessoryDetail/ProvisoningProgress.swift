@@ -1,8 +1,6 @@
 import SwiftUI
 
 struct ProvisioningProgress: View {
-    let provisioning: Provisioning
-
     var body: some View {
         VStack(spacing: 16) {
             Spacer()
@@ -38,10 +36,6 @@ struct ProvisioningProgress: View {
 
 #Preview {
     NavigationStack {
-        ProvisioningProgress(
-            provisioning: Provisioning(
-                PreviewAccessory(displayName: "")
-            )
-        )
+        ProvisioningProgress()
     }
 }
