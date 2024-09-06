@@ -9,11 +9,12 @@ import SwiftUI
 
 struct LargeImage: View {
     let systemName: String
+    var color: Color?
 
     var body: some View {
         Image(systemName: systemName)
             .font(.system(size: 150, weight: .light))
-            .foregroundStyle(.gray)
+            .foregroundStyle(color ?? .gray)
     }
 }
 

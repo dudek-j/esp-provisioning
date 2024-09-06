@@ -6,6 +6,9 @@ private let versionPath = "proto-ver"
 
 struct NotConnectedError: Error {}
 struct ProvisioningError: Error {}
+struct ConfigApplied {}
+
+typealias SendCredentials = () -> AsyncThrowingStream<ConfigApplied, Error>
 
 class Provisioning {
     private var device: ESPDevice
@@ -25,4 +28,20 @@ class Provisioning {
             }
         }
     }
+
+    func send(_ credentials: Credentials) -> AsyncThrowingStream<ConfigApplied, Error> {
+        AsyncThrowingStream { cont in
+            device.provision(ssid: credentials.ssid, passPhrase: credentials.password) { status in
+                switch status {
+                case .success:
+                    cont.finish()
+                case .failure(let error):
+                    cont.finish(throwing: error)
+                case .configApplied:
+                    cont.yield(ConfigApplied())
+                }
+            }
+        }
+    }
 }
+

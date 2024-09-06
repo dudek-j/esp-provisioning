@@ -21,5 +21,4 @@ struct ConnectAction: View {
             }
         )
     }
-
 }

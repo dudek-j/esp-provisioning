@@ -28,27 +28,27 @@ struct AccessoryDetail: View {
     private func CurrentStep() -> some View {
         switch step {
         case .connect:
-            ConnectAction(
-                loading: $loading,
-                accessory: accessory,
-                connect: connect
-            )
+            ConnectAction(loading: $loading, accessory: accessory, connect: connect)
         case .selectWifi(let provisioning):
             SelectNetwork(
                 displayName: accessory.displayName,
                 refresh: provisioning.wifiList,
-                onCredentials: {
-                    setStep(
-                        step: .provision(
-                            provisioning: provisioning,
-                            ssid: $0,
-                            password: $1
-                        )
-                    )
+                onCredentials: { credentials in
+                    setStep(step: .provision(
+                        send: { provisioning.send(credentials) },
+                        tryAgain: { setStep(step: .selectWifi(provisioning)) }
+                    ))
                 }
             )
-        case .provision(_, let ssid, let password):
-            Text("\(ssid)\n\(password)")
+        case .provision(let sendCredentials, let tryAgain):
+            ProvisioningProgress(
+                loading: $loading,
+                sendCredentials: sendCredentials,
+                tryAgain: tryAgain,
+                onSuccess: { setStep(step: .success) }
+            )
+        case .success:
+            ProvisioningSuccess()
         }
     }
 
@@ -64,7 +64,7 @@ struct AccessoryDetail: View {
             loading = true
             do {
                 let device = try await connection.establish()
-                setStep(step: .selectWifi(provisioning: Provisioning(device)))
+                setStep(step: .selectWifi(Provisioning(device)))
             } catch {
                 alert = "DBG: \(error)"
             }
@@ -81,8 +81,9 @@ struct AccessoryDetail: View {
 
     enum Step {
         case connect
-        case selectWifi(provisioning: Provisioning)
-        case provision(provisioning: Provisioning, ssid: SSID, password: Password)
+        case selectWifi(_ provisioning: Provisioning)
+        case provision(send: SendCredentials, tryAgain: () -> Void)
+        case success
     }
 }
 

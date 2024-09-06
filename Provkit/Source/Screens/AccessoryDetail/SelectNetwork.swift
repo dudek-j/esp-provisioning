@@ -2,6 +2,7 @@ import SwiftUI
 
 typealias SSID = String
 typealias Password = String
+typealias Credentials = (ssid: SSID, password: Password)
 
 struct SelectNetwork: View {
     @State var networks: [any WifiNetwork]?
@@ -12,13 +13,12 @@ struct SelectNetwork: View {
 
     let displayName: String
     let refresh: () async throws -> [any WifiNetwork]
-    let onCredentials: (SSID, Password) -> Void
-
+    let onCredentials: (Credentials) -> Void
 
     init(
         displayName: String,
         refresh: @escaping () async throws -> [any WifiNetwork],
-        onCredentials: @escaping (SSID, Password) -> Void
+        onCredentials: @escaping (Credentials) -> Void
     ) {
         self.displayName = displayName
         self.refresh = refresh
@@ -92,7 +92,7 @@ struct SelectNetwork: View {
     @ViewBuilder
     private func PasswordAlert() -> some View {
         SecureField("Password", text: $password)
-        Button("Provision", action: { onCredentials(selectedSSID!, password) })
+        Button("Provision", action: { onCredentials((selectedSSID!, password)) })
         Button("Cancel", role: .cancel, action: { password = "" })
     }
 }
