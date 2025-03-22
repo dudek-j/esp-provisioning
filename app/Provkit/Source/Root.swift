@@ -2,7 +2,7 @@ import SwiftUI
 import AccessorySetupKit
 
 struct Root: View {
-    var accessories: Accessories
+    let accessories: Accessories
 
     var body: some View {
         switch accessories.available {

@@ -1,0 +1,9 @@
+CompileFlags:
+  Add: [
+    -ferror-limit=0,
+  ]
+  Remove: [
+    -fno-shrink-wrap,
+    -fno-tree-switch-conversion,
+    -fstrict-volatile-bitfields,
+  ]

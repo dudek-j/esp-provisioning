@@ -364,7 +364,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/espressif/esp-idf-provisioning-ios";
 			requirement = {
-				kind = upToNextMajorVersion;
+				kind = versionRange;
+				maximumVersion = 4.0.0;
 				minimumVersion = 3.0.1;
 			};
 		};

@@ -9,17 +9,23 @@ class Accessories {
     private let session = ASAccessorySession()
 
     init() {
-        self.session.activate(on: .main, eventHandler: accessoryEvent)
+        activateSession()
+    }
+
+    private func activateSession() {
+        session.activate(
+            on: .main,
+            eventHandler: { [weak self] _ in
+                guard let self else { return }
+                available = session.accessories
+            }
+        )
     }
 
     func discover() {
         Task {
             try! await session.showPicker(for: [.vinylPlayer])
         }
-    }
-
-    private func accessoryEvent(event: ASAccessoryEvent) {
-        available = session.accessories
     }
 }
 

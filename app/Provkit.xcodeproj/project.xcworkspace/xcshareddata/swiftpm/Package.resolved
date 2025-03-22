@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/espressif/esp-idf-provisioning-ios",
       "state" : {
-        "revision" : "40344b2e14da2949a5a72d81c29230a0811708ca",
-        "version" : "3.0.1"
+        "revision" : "ff70c09ded605969e053ade44a6b8756b93c4e4c",
+        "version" : "3.0.3"
       }
     },
     {
