@@ -22,6 +22,7 @@ class Provisioning {
             device.scanWifiList { wifi, error in
                 if let error {
                     cont.resume(throwing: error)
+                    return
                 }
 
                 cont.resume(returning: wifi ?? [])
