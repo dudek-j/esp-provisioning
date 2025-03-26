@@ -122,14 +122,6 @@ static void wifi_prov_event_handler(void *arg, esp_event_base_t event_base,
   }
 }
 
-static void get_device_service_name(char *service_name, size_t max) {
-  uint8_t eth_mac[6];
-  const char *ssid_prefix = "PROV_";
-  esp_wifi_get_mac(WIFI_IF_STA, eth_mac);
-  snprintf(service_name, max, "%s%02X%02X%02X", ssid_prefix, eth_mac[3],
-           eth_mac[4], eth_mac[5]);
-}
-
 void setup_deps() {
   esp_err_t ret = nvs_flash_init();
   if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
@@ -178,10 +170,8 @@ void app_main(void) {
   wifi_prov_mgr_reset_provisioning();
 
   ESP_LOGI(TAG, "Starting provisioning");
-  char service_name[12];
-  ESP_LOGI(TAG, "Service name %s", service_name);
-  get_device_service_name(service_name, sizeof(service_name));
 
+  const char *service_name = "dudek-sonos-vinyl";
   wifi_prov_security_t security = WIFI_PROV_SECURITY_1;
   wifi_prov_security1_params_t *pop = NULL; // NO POP
   const char *service_key = NULL;
